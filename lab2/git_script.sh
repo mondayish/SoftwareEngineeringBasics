@@ -17,6 +17,7 @@ change_branch() {
 
 merge() {
 	git merge br$1 --no-commit
+	git checkout --ours .
 }
 
 red_user() {
