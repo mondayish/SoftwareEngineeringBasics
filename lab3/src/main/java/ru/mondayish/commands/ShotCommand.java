@@ -14,12 +14,16 @@ public class ShotCommand implements Command {
             System.err.println("Invalid arguments for command");
             return;
         }
-        double x = Double.parseDouble(commandArgs[0]);
-        double y = Double.parseDouble(commandArgs[1]);
-        double r = Double.parseDouble(commandArgs[2]);
-        boolean result = AreaUtils.getResultOfShot(x, y, r);
-        System.out.println("Result: "+result);
-        shotManager.addShotToHistory(new Shot(x, y, r, result));
+        try {
+            double x = Double.parseDouble(commandArgs[0]);
+            double y = Double.parseDouble(commandArgs[1]);
+            double r = Double.parseDouble(commandArgs[2]);
+            boolean result = AreaUtils.getResultOfShot(x, y, r);
+            System.out.println("Result: " + result);
+            shotManager.addShotToHistory(new Shot(x, y, r, result));
+        } catch (IllegalArgumentException e){
+            System.err.println(e.getMessage());
+        }
     }
 
     @Override

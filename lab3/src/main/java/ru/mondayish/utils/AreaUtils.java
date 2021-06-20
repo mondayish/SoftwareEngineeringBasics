@@ -3,6 +3,7 @@ package ru.mondayish.utils;
 public class AreaUtils {
 
     public static boolean getResultOfShot(double x, double y, double r){
+        if(r <= 0) throw new IllegalArgumentException("R must be > 0");
         return isInRightTop(x,y,r) || isInRightBottom(x,y,r)
                 || isInLeftTop(x,y,r) || isInLeftBottom(x,y,r);
     }
