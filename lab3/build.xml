@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<project name="lab3" default="build">
+    <property file="build.properties"/>
+
+    <path id="classpath.source">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
+
+    <!-- native2ascii - преобразование native2ascii для копий файлов локализации (для тестирования сценария все строковые параметры необходимо вынести из классов в файлы локализации) -->
+    <target name="native2ascii">
+        <native2ascii src="./src/resources/native" dest="./src/resources/ascii"
+                      includes="*.properties" ext=".properties"/>
+        <echo message="--- NATIVE2ASCII FINISHED ---"/>
+    </target>
+
+    <!-- compile - компиляция исходных кодов проекта -->
+    <target name="compile" depends="native2ascii">
+        <mkdir dir="${compiled.classes}"/>
+        <mkdir dir="${compiled.tests}"/>
+        <javac destdir="${compiled.classes}" includeantruntime="false">
+            <src path="${main}"/>
+            <classpath>
+                <pathelement location="${compiled.classes}"/>
+                <path refid="classpath.source"/>
+            </classpath>
+        </javac>
+        <javac destdir="${compiled.tests}" includeantruntime="false">
+            <src path="${test}"/>
+            <classpath>
+                <pathelement location="${compiled.classes}"/>
+                <path refid="classpath.source"/>
+            </classpath>
+        </javac>
+        <echo message="--- COMPILE FINISHED ---"/>
+    </target>
+
+    <!-- build - компиляция исходных кодов проекта и их упаковка в исполняемый jar-архив. Компиляцию исходных кодов реализовать посредством вызова цели compile -->
+    <target name="build" depends="compile">
+        <jar destfile="${dest.jar}" basedir="${compiled.classes}" compress="false" index="true">
+            <fileset dir="${resources}"/>
+            <manifest>
+                <attribute name="Main-Class" value="ru.mondayish.Runner"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+            </manifest>
+        </jar>
+        <echo message="--- BUILD FINISHED ---"/>
+    </target>
+
+    <!-- clean - удаление скомпилированных классов проекта и всех временных файлов (если они есть) -->
+    <target name="clean">
+        <delete dir="${compiled}"/>
+        <echo message="--- CLEAN FINISHED ---"/>
+    </target>
+
+    <!-- test - запуск junit-тестов проекта. Перед запуском тестов необходимо осуществить сборку проекта (цель build) -->
+    <target name="test" depends="build">
+        <junit haltonfailure="yes" printsummary="on">
+            <classpath>
+                <path refid="classpath.source"/>
+                <pathelement location="${compiled.classes}"/>
+                <pathelement location="${compiled.tests}"/>
+            </classpath>
+            <test name="ru.mondayish.AreaUtilsTest"/>
+        </junit>
+        <echo message="--- TEST FINISHED ---"/>
+    </target>
+
+    <!-- xml - валидация всех xml-файлов в проекте -->
+    <target name="xml">
+        <xmlvalidate failonerror="yes" lenient="no" warn="yes">
+            <fileset dir="." includes="*/*.xml"/>
+            <attribute name="http://xml.org/sax/features/validation" value="true"/>
+            <attribute name="http://apache.org/xml/features/validation/schema" value="true"/>
+            <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
+        </xmlvalidate>
+        <echo message="--- XML VALIDATION FINISHED ---"/>
+    </target>
+
+    <!-- env - осуществляет сборку и запуск программы в альтернативных окружениях; окружение задается версией java и набором аргументов виртуальной машины в файле параметров -->
+    <target name="env" depends="build">
+        <exec executable="cmd">
+            <arg value="/c"/>
+            <arg value="java ${java.params} -jar ${dest.jar}"/>
+        </exec>
+        <echo message="--- ENV FINISHED ---" />
+    </target>
+
+
+</project>
