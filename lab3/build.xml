@@ -89,15 +89,15 @@
         <mkdir dir="git"/>
 
         <exec executable="git" dir=".">
-            <arg value="reset"/>
-            <arg value="--hard HEAD~1"/>
+            <arg value="checkout"/>
+            <arg value="HEAD~1"/>
         </exec>
         <antcall target="build"/>
         <copy file="${dest.jar}" tofile="git/v1.jar" overwrite="false" />
 
         <exec executable="git" dir=".">
-            <arg value="reset"/>
-            <arg value="--hard HEAD~1"/>
+            <arg value="checkout"/>
+            <arg value="HEAD~1"/>
         </exec>
         <antcall target="build"/>
         <copy file="${dest.jar}" tofile="git/v2.jar" overwrite="false" />
