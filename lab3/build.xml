@@ -85,5 +85,24 @@
         <echo message="--- ENV FINISHED ---" />
     </target>
 
+    <target name="team">
+        <mkdir dir="git"/>
 
+        <exec executable="git" dir=".">
+            <arg value="reset"/>
+            <arg value="--hard HEAD~1"/>
+        </exec>
+        <antcall target="build"/>
+        <copy file="${dest.jar}" tofile="git/v1.jar" overwrite="false" />
+
+        <exec executable="git" dir=".">
+            <arg value="reset"/>
+            <arg value="--hard HEAD~1"/>
+        </exec>
+        <antcall target="build"/>
+        <copy file="${dest.jar}" tofile="git/v2.jar" overwrite="false" />
+
+        <zip destfile="team.zip"
+             basedir="git" includes="*.jar"/>
+    </target>
 </project>
